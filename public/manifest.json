@@ -1,0 +1,17 @@
+{
+  "name": "부놈의 경매이야기",
+  "short_name": "경매이야기",
+  "description": "AI로 더 쉽게, 더 스마트하게 — 부동산 경매 기초부터 실전까지",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#faf8f4",
+  "theme_color": "#161614",
+  "lang": "ko",
+  "icons": [
+    {
+      "src": "/og-image.png",
+      "sizes": "1200x630",
+      "type": "image/png"
+    }
+  ]
+}
