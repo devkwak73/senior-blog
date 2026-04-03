@@ -93,7 +93,7 @@ body {
 
 /* ── Blog feed article ──────────────────────────── */
 .feed-article {
-  padding: 2.25rem 2.5rem;
+  padding: 1.25rem 1rem;
   border-bottom: 1px solid var(--border-light);
   transition: background 0.15s;
   position: relative;
@@ -112,7 +112,7 @@ body {
 
 .feed-title {
   font-family: var(--font-serif);
-  font-size: 1.5rem;
+  font-size: 1.25rem;
   font-weight: 700;
   line-height: 1.4;
   color: var(--ink);
@@ -652,11 +652,60 @@ body {
 
 /* ── Ad slot in feed ────────────────────────────── */
 .feed-ad-slot {
-  padding: 1.25rem 2.5rem;
+  padding: 1.25rem 1rem;
   border-bottom: 1px solid var(--border-light);
   background: var(--bg);
 }
 
 @media (min-width: 768px) {
   .feed-ad-slot { padding: 1.25rem 3rem; }
+}
+
+/* ── Post detail article ───────────────────────── */
+.post-article {
+  background: var(--bg-card);
+  border-radius: 0 0 16px 16px;
+  border: 1px solid var(--border);
+  border-top: none;
+  padding: 1.25rem 1rem 1.5rem;
+  margin-bottom: 2rem;
+  box-shadow: 0 2px 12px rgba(0,0,0,0.06);
+}
+@media (min-width: 768px) {
+  .post-article { padding: 2.5rem 2.5rem 3rem; }
+}
+
+/* ── Mobile responsive overrides ───────────────── */
+@media (max-width: 767px) {
+  .prose {
+    font-size: 1rem;
+    line-height: 1.8;
+    overflow-wrap: break-word;
+    word-break: keep-all;
+  }
+  .prose h2 { font-size: 1.25rem; }
+  .prose h3 { font-size: 1.0625rem; }
+  .prose pre {
+    font-size: 0.8rem;
+    padding: 1rem;
+    border-radius: 8px;
+  }
+  .prose table {
+    font-size: 0.85rem;
+    display: block;
+    overflow-x: auto;
+  }
+  .prose table th,
+  .prose table td {
+    padding: 0.5em 0.65em;
+    white-space: nowrap;
+  }
+  .prose blockquote {
+    padding: 0.6em 1em;
+    margin: 1.25em 0;
+  }
+  .prose img {
+    border-radius: 8px;
+    margin: 1.25em 0;
+  }
 }

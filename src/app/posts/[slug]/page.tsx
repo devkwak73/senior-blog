@@ -161,18 +161,10 @@ export default async function PostPage({ params }: Props) {
           </div>
         </header>
 
-        <main style={{ maxWidth: "52rem", margin: "0 auto", padding: "0 1.5rem" }}>
+        <main style={{ maxWidth: "52rem", margin: "0 auto", padding: "0 0.75rem" }}>
 
           {/* ── 아티클 ─────────────────────────── */}
-          <article style={{
-            background: "var(--bg-card)",
-            borderRadius: "0 0 16px 16px",
-            border: "1px solid var(--border)",
-            borderTop: "none",
-            padding: "2.5rem 2.5rem 3rem",
-            marginBottom: "2rem",
-            boxShadow: "0 2px 12px rgba(0,0,0,0.06)",
-          }}>
+          <article className="post-article">
 
             {/* 메타 */}
             <div style={{

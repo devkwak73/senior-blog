@@ -77,7 +77,7 @@ export default async function HomePage({ searchParams }: { searchParams: SearchP
 
       {/* ── 헤더 ──────────────────────────────────── */}
       <header style={{ background: "var(--header-bg)" }}>
-        <div style={{ maxWidth: "56rem", margin: "0 auto", padding: "2rem 1.5rem 1.75rem" }}>
+        <div style={{ maxWidth: "56rem", margin: "0 auto", padding: "2rem 1rem 1.75rem" }}>
           <div style={{ display: "flex", alignItems: "flex-end", justifyContent: "space-between", gap: "1rem" }}>
             <div>
               <div style={{
@@ -178,7 +178,7 @@ export default async function HomePage({ searchParams }: { searchParams: SearchP
       </div>
 
       {/* ── 메인 콘텐츠 ───────────────────────────── */}
-      <main style={{ maxWidth: "56rem", margin: "0 auto", padding: "0 1.5rem" }}>
+      <main style={{ maxWidth: "56rem", margin: "0 auto", padding: "0 0.75rem" }}>
 
         {/* 뷰 토글 + 글 수 */}
         <div style={{
