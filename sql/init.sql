@@ -1,13 +1,13 @@
 -- ============================================
--- auction-blog DB 초기화 스크립트
+-- senior-blog DB 초기화 스크립트
 -- 파일: sql/init.sql
 -- ============================================
 
-CREATE DATABASE IF NOT EXISTS auction_blog
+CREATE DATABASE IF NOT EXISTS senior_blog
   DEFAULT CHARACTER SET utf8mb4
   DEFAULT COLLATE utf8mb4_unicode_ci;
 
-USE auction_blog;
+USE senior_blog;
 
 -- ──────────────────────────────────────────
 -- 글 테이블

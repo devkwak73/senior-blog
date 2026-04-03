@@ -6,11 +6,12 @@ interface JsonLdProps {
 
 export default function JsonLd({ post }: JsonLdProps) {
   const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "http://localhost:3000";
-  const siteName = process.env.NEXT_PUBLIC_SITE_NAME || "부놈의 경매이야기";
+  const siteName = process.env.NEXT_PUBLIC_SITE_NAME || "토닥토닥 시니어";
 
   const catLabels: Record<string, string> = {
-    before: "입찰준비", bidding: "입찰·낙찰", after: "명도·출구",
-    tax: "세금·대출", law: "권리분석", ai: "AI활용",
+    health: "건강톡톡", subsidy: "지원금알리미", money: "돈이야기",
+    travel: "어디갈까", digital: "스마트생활", food: "오늘뭐먹지",
+    mind: "마음건강", legal: "생활법률",
   };
 
   const article = {
@@ -22,7 +23,7 @@ export default function JsonLd({ post }: JsonLdProps) {
     dateModified: post.updated_at,
     author: {
       "@type": "Person",
-      name: "부놈",
+      name: "마인드라",
       url: siteUrl,
     },
     publisher: {

@@ -11,7 +11,7 @@ const notoSansKR = Noto_Sans_KR({
   variable: "--font-noto-sans-kr",
 });
 
-const siteName = process.env.NEXT_PUBLIC_SITE_NAME || "부놈의 경매이야기";
+const siteName = process.env.NEXT_PUBLIC_SITE_NAME || "토닥토닥 시니어";
 const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "http://localhost:3000";
 
 const googleVerification = process.env.NEXT_PUBLIC_GOOGLE_VERIFICATION;
@@ -23,9 +23,9 @@ export const metadata: Metadata = {
     template: `%s | ${siteName}`,
     default: siteName,
   },
-  description: "AI로 더 쉽게, 더 스마트하게 — 부동산 경매 기초부터 실전까지",
-  keywords: ["부동산 경매", "경매 입찰", "권리분석", "낙찰", "명도", "경매 세금", "AI 경매", "경매 초보"],
-  authors: [{ name: "부놈", url: siteUrl }],
+  description: "손자가 설명하듯 쉽고 따뜻한 시니어 생활정보",
+  keywords: ["시니어", "어르신", "기초연금", "건강관리", "시니어 생활정보", "노후준비", "시니어 디지털", "시니어 여행"],
+  authors: [{ name: "마인드라", url: siteUrl }],
   alternates: {
     canonical: siteUrl,
   },
@@ -35,13 +35,13 @@ export const metadata: Metadata = {
     locale: "ko_KR",
     url: siteUrl,
     title: siteName,
-    description: "AI로 더 쉽게, 더 스마트하게 — 부동산 경매 기초부터 실전까지",
+    description: "손자가 설명하듯 쉽고 따뜻한 시니어 생활정보",
     images: [{ url: `${siteUrl}/og-image.png`, width: 1200, height: 630, alt: siteName }],
   },
   twitter: {
     card: "summary_large_image",
     title: siteName,
-    description: "AI로 더 쉽게, 더 스마트하게 — 부동산 경매 기초부터 실전까지",
+    description: "손자가 설명하듯 쉽고 따뜻한 시니어 생활정보",
     images: [`${siteUrl}/og-image.png`],
   },
   ...(googleVerification || naverVerification

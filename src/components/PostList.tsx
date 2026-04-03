@@ -9,30 +9,26 @@ interface PostListProps {
 }
 
 const catBadgeClass: Record<string, string> = {
-  before: "badge badge-before",
-  bidding: "badge badge-bidding",
-  after:   "badge badge-after",
-  tax:     "badge badge-tax",
-  law:     "badge badge-law",
-  ai:      "badge badge-ai",
+  health:  "badge badge-health",
+  subsidy: "badge badge-subsidy",
+  money:   "badge badge-money",
+  travel:  "badge badge-travel",
+  digital: "badge badge-digital",
+  food:    "badge badge-food",
+  mind:    "badge badge-mind",
+  legal:   "badge badge-legal",
 };
 
 const catLabels: Record<string, string> = {
-  before: "입찰준비",
-  bidding: "입찰·낙찰",
-  after:   "명도·출구",
-  tax:     "세금·대출",
-  law:     "권리분석",
-  ai:      "AI활용",
+  health:  "건강톡톡",
+  subsidy: "지원금알리미",
+  money:   "돈이야기",
+  travel:  "어디갈까",
+  digital: "스마트생활",
+  food:    "오늘뭐먹지",
+  mind:    "마음건강",
+  legal:   "생활법률",
 };
-
-function getLevelBadge(slug?: string): { cls: string; label: string } | null {
-  if (!slug) return null;
-  if (slug.startsWith("basic-")) return { cls: "badge badge-basic", label: "기초" };
-  if (slug.startsWith("mid-"))   return { cls: "badge badge-mid",   label: "중급" };
-  if (slug.startsWith("adv-"))   return { cls: "badge badge-adv",   label: "고급" };
-  return null;
-}
 
 export default function PostList({ posts }: PostListProps) {
   if (posts.length === 0) {
@@ -48,8 +44,7 @@ export default function PostList({ posts }: PostListProps) {
   return (
     <div>
       {posts.map((post) => {
-        const cat = post.category || "before";
-        const level = getLevelBadge(post.slug);
+        const cat = post.category || "health";
         const likeCount = (post as Record<string, unknown>).like_count as number || 0;
         const publishedDate = post.published_at
           ? new Date(post.published_at).toLocaleDateString("ko-KR", {
@@ -69,7 +64,6 @@ export default function PostList({ posts }: PostListProps) {
               <span className={catBadgeClass[cat] || "badge"}>
                 {catLabels[cat] || cat}
               </span>
-              {level && <span className={level.cls}>{level.label}</span>}
               {publishedDate && (
                 <span style={{ fontSize: "0.75rem", color: "var(--ink-faint)", marginLeft: "0.25rem" }}>
                   {publishedDate}

@@ -1,7 +1,7 @@
 /**
- * 경매AI블로그 자동 글 생성 스크립트
+ * 시니어 생활정보 블로그 자동 글 생성 스크립트
  * 사용법: npx tsx scripts/generate-post.ts
- * 크론탭: 0 9 * * 1-5 cd /path/to/auction-blog && npx tsx scripts/generate-post.ts
+ * 크론탭: 0 9 * * 1-5 cd /path/to/senior-blog && npx tsx scripts/generate-post.ts
  */
 
 import { GoogleGenerativeAI } from "@google/generative-ai";
@@ -22,7 +22,7 @@ const pool = mysql.createPool({
   port: Number(process.env.DATABASE_PORT) || 3306,
   user: process.env.DATABASE_USER || "root",
   password: process.env.DATABASE_PASSWORD || "",
-  database: process.env.DATABASE_NAME || "auction_blog",
+  database: process.env.DATABASE_NAME || "senior_blog",
   socketPath: process.env.DATABASE_SOCKET || undefined,
   charset: "utf8mb4",
 });
@@ -38,12 +38,14 @@ const model = genAI.getGenerativeModel({ model: "gemini-2.5-flash" });
 
 // ── 카테고리 → Unsplash 검색어 맵 ────────────────
 const CATEGORY_QUERY: Record<string, string[]> = {
-  bidding: ["real estate auction", "property bidding", "house auction", "real estate investment people", "property sale"],
-  law:     ["lawyer office", "legal consultation", "court document", "law firm meeting", "contract signing"],
-  before:  ["house inspection", "property research", "real estate search", "home checklist", "building exterior"],
-  after:   ["house keys handover", "family moving home", "new home", "property handover", "moving boxes"],
-  tax:     ["finance meeting", "tax documents", "financial advisor", "accounting office", "money calculation"],
-  ai:      ["technology office", "computer work", "digital workspace", "data analysis", "modern office"],
+  health:  ["senior health", "elderly exercise", "walking park", "medical checkup", "yoga senior"],
+  subsidy: ["government office korea", "senior center", "welfare office", "document filing", "elderly care"],
+  money:   ["retirement planning", "pension finance", "savings bank", "family inheritance", "elderly financial"],
+  travel:  ["hiking trail korea", "hot spring spa", "couple travel", "temple stay", "nature scenery"],
+  digital: ["senior smartphone", "elderly technology", "kiosk touchscreen", "online shopping", "digital literacy"],
+  food:    ["healthy korean meal", "simple cooking", "seasonal vegetables", "nutrition senior", "korean traditional food"],
+  mind:    ["meditation garden", "elderly couple", "hobby painting", "social gathering", "peaceful nature"],
+  legal:   ["legal document signing", "consumer protection", "family meeting", "elder safety", "will testament"],
 };
 
 interface UnsplashResult {
@@ -82,7 +84,7 @@ async function fetchUnsplashImages(category: string, count: number, usedIds: Set
     return [];
   }
 
-  const queries = CATEGORY_QUERY[category] ?? ["real estate property", "building exterior"];
+  const queries = CATEGORY_QUERY[category] ?? ["senior lifestyle", "peaceful nature"];
 
   try {
     const results: UnsplashResult[] = [];
@@ -125,7 +127,7 @@ async function fetchUnsplashImages(category: string, count: number, usedIds: Set
         usedIds.add(baseUrl); // 이번 요청 내 중복도 방지
         results.push({
           url: photo.urls.regular,
-          attribution: `<a href="${photo.links.html}?utm_source=auction_blog&utm_medium=referral" rel="noopener noreferrer" style="color:rgba(255,255,255,0.9);">${photo.user.name}</a> / Unsplash`,
+          attribution: `<a href="${photo.links.html}?utm_source=senior_blog&utm_medium=referral" rel="noopener noreferrer" style="color:rgba(255,255,255,0.9);">${photo.user.name}</a> / Unsplash`,
         });
         if (results.length >= count) break;
       }
@@ -142,18 +144,12 @@ async function fetchUnsplashImages(category: string, count: number, usedIds: Set
   }
 }
 
-// ── 콘텐츠 내 이미지 삽입 (AI팁 섹션 제외) ────────
+// ── 콘텐츠 내 이미지 삽입 ────────────────────────
 function injectImagesIntoContent(html: string, images: UnsplashResult[]): string {
   if (!images.length) return html;
 
-  // AI 도구 활용 팁 섹션에는 이미지 삽입 안 함
-  const AI_TIP_MARKER = "<h2>💡 AI 도구 활용 팁</h2>";
-  const aiTipIdx = html.indexOf(AI_TIP_MARKER);
-  const mainContent = aiTipIdx === -1 ? html : html.slice(0, aiTipIdx);
-  const aiTipContent = aiTipIdx === -1 ? "" : html.slice(aiTipIdx);
-
   const DELIMITER = "</h2>";
-  const parts = mainContent.split(DELIMITER);
+  const parts = html.split(DELIMITER);
 
   // 1번째 h2 뒤(index 1), 3번째 h2 뒤(index 3)에 삽입
   const targets: Array<[partIndex: number, imageIndex: number]> = [
@@ -179,13 +175,13 @@ function injectImagesIntoContent(html: string, images: UnsplashResult[]): string
     parts[partIdx] = parts[partIdx] + figure;
   }
 
-  return parts.join(DELIMITER) + aiTipContent;
+  return parts.join(DELIMITER);
 }
 
 // ── 다음 발행할 주제 결정 ─────────────────────────
 async function getNextTopic(): Promise<Topic | null> {
   const [rows] = await pool.query<mysql.RowDataPacket[]>(
-    "SELECT slug FROM posts WHERE slug REGEXP '^(basic|mid|adv)-[0-9]+$'"
+    "SELECT slug FROM posts WHERE slug REGEXP '^(health|subsidy|money|travel|digital|food|mind|legal)-[0-9]+$'"
   );
   const existingSlugs = new Set(rows.map((r) => r.slug));
 
@@ -199,61 +195,41 @@ async function getNextTopic(): Promise<Topic | null> {
 
 // ── Gemini 프롬프트 생성 ──────────────────────────
 function buildPrompt(topic: Topic): string {
-  return `당신은 "부놈의 경매이야기" 블로그의 운영자 '부놈'입니다. 부동산 경매 전문 블로그 작가입니다.
+  return `당신은 "토닥토닥 시니어" 블로그의 운영자 '마인드라'입니다. 50대 이상 시니어를 위한 생활정보 블로그 작가입니다.
 
 아래 주제로 블로그 글을 작성해주세요.
 
 주제: ${topic.title}
-난이도: ${topic.level}
 카테고리: ${topic.category}
+SEO 키워드: ${topic.keywords}
 
 [작성 규칙]
-1. 누구나 이해할 수 있는 쉽고 친근한 말투로 작성 (단, "중학생", "초등학생" 등 특정 연령 언급 절대 금지)
-2. 반드시 존댓말(~요, ~습니다, ~세요)만 사용. 반말(~야, ~해, ~이야) 절대 금지
-3. "여러분", "독자님", "친구" 등 독자를 직접 부르는 호칭 절대 사용 금지
-4. 글의 첫 문장은 반드시 강한 후킹으로 시작. 의문형·충격적 사실·공감 유발 문장 중 하나로 시작
-   좋은 예: "경매로 집을 살 때 가장 큰 착각은 '싸게만 사면 된다'는 생각입니다."
-   좋은 예: "부동산 경매에 실패한 사람들의 공통점이 있습니다."
-   나쁜 예: "안녕하세요", "여러분", "오늘은 ~에 대해 알아보겠습니다" (금지)
-5. 블로그 운영자 '부놈'이 독자에게 차분하고 신뢰감 있게 설명해주는 느낌으로 작성
-6. 인사말("안녕하세요", "반갑습니다", "저는 부놈입니다" 등)로 시작 절대 금지
-7. 3000자 내외 (너무 짧으면 안 됨)
-7. 표(<table>)와 목록(<ul><li>)을 최대한 많이 활용
-8. 숫자나 비율로 설명할 수 있는 내용은 반드시 표로 만들 것
-9. 어려운 개념은 쉬운 예시로 반드시 설명
-10. 글의 흐름이 자연스럽게 이어지도록 작성
-11. 단계별 절차(소유권이전, 명도, 세금신고, 입찰, 권리분석 등 순서가 중요한 프로세스)가 있을 때는
-    반드시 아래 HTML 구조의 흐름도로 표현할 것 (4~7단계 적합):
-    <div class="flow-diagram">
-      <div class="flow-step"><div class="flow-num">1</div><div class="flow-body"><strong>단계명</strong><p>설명</p></div></div>
-      <div class="flow-arrow">↓</div>
-      <div class="flow-step"><div class="flow-num">2</div><div class="flow-body"><strong>단계명</strong><p>설명</p></div></div>
-      <div class="flow-arrow">↓</div>
-      ...
-    </div>
-    flow-diagram 클래스는 사용 가능한 태그 목록 외의 div이지만 이 경우에만 허용됨.
-11. 글 마지막에 반드시 아래 형식의 "AI 도구 활용 팁" 섹션 추가
+1. 손자가 할머니·할아버지께 설명하듯 쉽고 따뜻한 말투로 작성
+2. 반드시 존댓말(~요, ~습니다, ~세요)만 사용
+3. "여러분", "독자님" 등 독자를 직접 부르는 호칭 사용 금지
+4. 한 문장은 40자 이내로 짧게 끊어 쓰기
+5. 전문 용어는 반드시 쉬운 말로 풀어서 설명
+6. 글의 첫 문장은 공감을 유발하는 질문이나 상황 묘사로 시작
+   좋은 예: "무릎이 시리면 관절염인가요? 많은 분이 이렇게 걱정하세요."
+   좋은 예: "기초연금, 내가 받을 수 있는 건지 헷갈리시죠?"
+   나쁜 예: "안녕하세요" (인사말 시작 절대 금지)
+   나쁜 예: "오늘은 ~에 대해 알아보겠습니다" (금지)
+7. 2500~3000자 내외
+8. 표(<table>)와 목록(<ul><li>)을 적극 활용하여 한눈에 보기 쉽게 정리
+9. 금액, 기한, 자격조건 등 핵심 수치는 반드시 표로 정리
+10. 단계별 절차가 있으면 순서도(flow-diagram) 형식 사용
+11. 핵심 내용은 <strong> 태그로 강조
+12. 글 마지막에 "한 줄 요약" 섹션 추가
 
-[AI 도구 활용 팁 규칙]
-- 이 주제(${topic.title})와 직접 관련된 실용적인 팁 5~8줄
-- 특정 AI 도구 이름(Claude, ChatGPT, Gemini 등) 절대 언급 금지
-- 반드시 "AI 도구"라고만 표기
-- 실제로 복사해서 바로 쓸 수 있는 프롬프트 예시 1~2개 포함
+[한 줄 요약 형식]
+<h2>한 줄 요약</h2>
+<blockquote>[이 글의 핵심을 1~2문장으로 정리]</blockquote>
 
-[출력 형식 - 매우 중요]
-- 순수 HTML 태그만 출력 (코드 블록, 마크다운 절대 사용 금지)
-- **, ##, *, \`\`\` 같은 마크다운 기호 절대 사용 금지
+[출력 형식]
+- 순수 HTML 태그만 출력 (마크다운 절대 금지)
 - 사용 가능한 태그: <h2> <h3> <p> <ul> <ol> <li> <table> <thead> <tbody> <tr> <th> <td> <strong> <blockquote>
-- <h1> 태그 사용 금지 (제목은 별도로 표시됨)
-- 응답은 HTML 태그로 시작하고 HTML 태그로 끝날 것
-
-[AI 도구 활용 팁 HTML 형식]
-<h2>💡 AI 도구 활용 팁</h2>
-<p>...</p>
-<ul>
-  <li>...</li>
-</ul>
-<blockquote>프롬프트 예시: "..."</blockquote>`;
+- <h1> 태그 사용 금지 (제목은 별도 처리됨)
+- 응답은 반드시 HTML 태그로 시작하고 HTML 태그로 끝날 것`;
 }
 
 // ── HTML 정리: 마크다운 잔재 + 아이콘 태그 제거 ──
@@ -267,38 +243,6 @@ function cleanHtml(raw: string): string {
     .replace(/<span\b[^>]*class="[^"]*(?:material-icons|material-symbols)[^"]*"[^>]*>.*?<\/span>/gi, "")
     .replace(/<i\b[^>]*>([a-z_]{3,30})<\/i>/gi, "")
     .trim();
-}
-
-// ── AI 팁 섹션 추출 ───────────────────────────────
-function extractAiTipSection(html: string): string {
-  const marker = "<h2>💡 AI 도구 활용 팁</h2>";
-  const idx = html.indexOf(marker);
-  return idx === -1 ? "" : html.slice(idx);
-}
-
-// ── AI 팁 별도 포스팅 저장 ────────────────────────
-async function saveAiTipPost(topic: Topic, aiTipHtml: string, thumbnailUrl: string | null): Promise<number> {
-  const aiSlug = `ai-tip-${topic.slug}`;
-  const aiTitle = `${topic.title} — AI 도구 활용 팁`;
-  const backLink = `<p style="margin-bottom:1.5em;"><a href="/posts/${topic.slug}" style="color:var(--accent);">← 원문 보러가기: ${topic.title}</a></p>`;
-  const content = backLink + aiTipHtml;
-  const now = new Date().toISOString().slice(0, 19).replace("T", " ");
-
-  const [result] = await pool.query<mysql.ResultSetHeader>(
-    `INSERT INTO posts
-      (title, content, slug, category, thumbnail_url, meta_description, keywords, status, published_at)
-     VALUES (?, ?, ?, 'ai', ?, ?, ?, 'published', ?)`,
-    [
-      aiTitle,
-      content,
-      aiSlug,
-      thumbnailUrl,
-      `${topic.title}에서 바로 쓸 수 있는 AI 도구 활용 팁과 프롬프트 예시입니다.`,
-      `AI도구활용,AI프롬프트,${topic.keywords}`,
-      now,
-    ]
-  );
-  return result.insertId;
 }
 
 // ── DB에 글 저장 ──────────────────────────────────
@@ -346,7 +290,7 @@ async function main() {
       return;
     }
 
-    writeLog(`📝 주제 선택: [${topic.level}] ${topic.index}/130 - ${topic.title}`);
+    writeLog(`📝 주제 선택: [${topic.category}] ${topic.index}/120 - ${topic.title}`);
 
     // Gemini로 글 생성
     writeLog("🤖 Gemini로 글 생성 중...");
@@ -369,14 +313,6 @@ async function main() {
     const postId = await savePost(topic, contentWithImages, thumbnail?.url ?? null);
     writeLog(`💾 DB 저장 완료 (id: ${postId}, slug: ${topic.slug})`);
     writeLog(`🌐 URL: ${process.env.NEXT_PUBLIC_SITE_URL}/posts/${topic.slug}`);
-
-    // AI 팁 별도 포스팅 저장
-    const aiTipHtml = extractAiTipSection(contentWithImages);
-    if (aiTipHtml) {
-      const aiPostId = await saveAiTipPost(topic, aiTipHtml, thumbnail?.url ?? null);
-      writeLog(`🤖 AI 팁 포스팅 저장 완료 (id: ${aiPostId}, slug: ai-tip-${topic.slug})`);
-      writeLog(`🌐 AI 팁 URL: ${process.env.NEXT_PUBLIC_SITE_URL}/posts/ai-tip-${topic.slug}`);
-    }
 
     // 웹 푸시 알림 발송
     await sendPushNotifications(topic, postId);
@@ -418,7 +354,7 @@ async function sendPushNotifications(topic: Topic, postId: number) {
     return;
   }
 
-  const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://blog.easyhelper.kr";
+  const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "http://localhost:3000";
   const payload = JSON.stringify({
     title: topic.title,
     body: topic.meta_description || "",
@@ -456,7 +392,7 @@ async function sendNewsletterEmails(topic: Topic) {
   }
 
   const resend = new Resend(apiKey);
-  const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://blog.easyhelper.kr";
+  const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "http://localhost:3000";
 
   const [rows] = await pool.query<mysql.RowDataPacket[]>(
     "SELECT email, unsubscribe_token FROM newsletter_subscribers WHERE is_active = 1"
@@ -475,18 +411,18 @@ async function sendNewsletterEmails(topic: Topic) {
     const unsubUrl = `${siteUrl}/api/newsletter/unsubscribe?token=${row.unsubscribe_token}`;
     try {
       await resend.emails.send({
-        from: "부놈의 경매이야기 <noreply@blog.easyhelper.kr>",
+        from: "토닥토닥 시니어 <noreply@senior.yourdomain.com>",
         to: row.email,
         subject: `[새 글] ${topic.title}`,
         html: `
           <div style="max-width:600px;margin:0 auto;font-family:'Apple SD Gothic Neo','Noto Sans KR',sans-serif;color:#1a1a1a;">
             <div style="padding:32px 24px;background:#0f172a;border-radius:12px 12px 0 0;">
-              <h1 style="color:#f8fafc;font-size:20px;margin:0;">부놈의 경매이야기</h1>
+              <h1 style="color:#f8fafc;font-size:20px;margin:0;">토닥토닥 시니어</h1>
             </div>
             <div style="padding:32px 24px;background:#ffffff;border:1px solid #e2e8f0;">
               <h2 style="font-size:22px;color:#0f172a;margin:0 0 16px;">${topic.title}</h2>
               <p style="font-size:16px;color:#475569;line-height:1.6;margin:0 0 24px;">${topic.meta_description || ""}</p>
-              <a href="${postUrl}" style="display:inline-block;padding:14px 28px;background:#3b82f6;color:#ffffff;text-decoration:none;border-radius:8px;font-weight:700;font-size:16px;">글 읽으러 가기</a>
+              <a href="${postUrl}" style="display:inline-block;padding:14px 28px;background:#1a7a3d;color:#ffffff;text-decoration:none;border-radius:8px;font-weight:700;font-size:16px;">글 읽으러 가기</a>
             </div>
             <div style="padding:16px 24px;background:#f8fafc;border-radius:0 0 12px 12px;text-align:center;">
               <a href="${unsubUrl}" style="font-size:13px;color:#94a3b8;text-decoration:underline;">구독 해제</a>

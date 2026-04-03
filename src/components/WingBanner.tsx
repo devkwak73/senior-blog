@@ -4,20 +4,18 @@ export default function WingBanner() {
   return (
     <div className="wing-banner">
 
-      {/* 상단: 경매도우미 */}
+      {/* 상단: 토닥토닥 시니어 */}
       <a
-        href="https://www.easyhelper.kr/"
-        target="_blank"
-        rel="noopener noreferrer"
+        href="/"
         className="wing-card wing-card--dark"
       >
-        <div className="wing-card__icon">🏠</div>
-        <div className="wing-card__title">경매도우미</div>
+        <div className="wing-card__icon">🌿</div>
+        <div className="wing-card__title">토닥토닥 시니어</div>
         <div className="wing-card__divider" />
         <div className="wing-card__desc">
-          AI로 쉽게<br />경매 분석하기
+          쉽고 따뜻한<br />시니어 생활정보
         </div>
-        <div className="wing-card__cta">바로가기 →</div>
+        <div className="wing-card__cta">홈으로 →</div>
       </a>
 
       {/* 하단: 토닥토닥 곁에 */}

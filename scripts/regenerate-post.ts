@@ -17,7 +17,7 @@ const pool = mysql.createPool({
   port: Number(process.env.DATABASE_PORT) || 3306,
   user: process.env.DATABASE_USER || "root",
   password: process.env.DATABASE_PASSWORD || "",
-  database: process.env.DATABASE_NAME || "auction_blog",
+  database: process.env.DATABASE_NAME || "senior_blog",
   socketPath: process.env.DATABASE_SOCKET || undefined,
   charset: "utf8mb4",
 });
@@ -32,12 +32,14 @@ const model = genAI.getGenerativeModel({ model: "gemini-2.5-flash" });
 
 // ── 카테고리 → Unsplash 검색어 맵 ────────────────
 const CATEGORY_QUERY: Record<string, string[]> = {
-  bidding: ["real estate auction", "property bidding", "house auction", "real estate investment people", "property sale"],
-  law:     ["lawyer office", "legal consultation", "court document", "law firm meeting", "contract signing"],
-  before:  ["house inspection", "property research", "real estate search", "home checklist", "building exterior"],
-  after:   ["house keys handover", "family moving home", "new home", "property handover", "moving boxes"],
-  tax:     ["finance meeting", "tax documents", "financial advisor", "accounting office", "money calculation"],
-  ai:      ["technology office", "computer work", "digital workspace", "data analysis", "modern office"],
+  health:  ["senior health", "elderly exercise", "walking park", "medical checkup", "yoga senior"],
+  subsidy: ["government office korea", "senior center", "welfare office", "document filing", "elderly care"],
+  money:   ["retirement planning", "pension finance", "savings bank", "family inheritance", "elderly financial"],
+  travel:  ["hiking trail korea", "hot spring spa", "couple travel", "temple stay", "nature scenery"],
+  digital: ["senior smartphone", "elderly technology", "kiosk touchscreen", "online shopping", "digital literacy"],
+  food:    ["healthy korean meal", "simple cooking", "seasonal vegetables", "nutrition senior", "korean traditional food"],
+  mind:    ["meditation garden", "elderly couple", "hobby painting", "social gathering", "peaceful nature"],
+  legal:   ["legal document signing", "consumer protection", "family meeting", "elder safety", "will testament"],
 };
 
 interface UnsplashResult {
@@ -74,7 +76,7 @@ async function fetchUnsplashImages(category: string, count: number, usedIds: Set
     return [];
   }
 
-  const queries = CATEGORY_QUERY[category] ?? ["real estate property", "building exterior"];
+  const queries = CATEGORY_QUERY[category] ?? ["senior lifestyle", "peaceful nature"];
 
   try {
     const results: UnsplashResult[] = [];
@@ -116,7 +118,7 @@ async function fetchUnsplashImages(category: string, count: number, usedIds: Set
           usedIds.add(baseUrl);
           results.push({
             url: photo.urls.regular,
-            attribution: `<a href="${photo.links.html}?utm_source=auction_blog&utm_medium=referral" rel="noopener noreferrer" style="color:rgba(255,255,255,0.9);">${photo.user.name}</a> / Unsplash`,
+            attribution: `<a href="${photo.links.html}?utm_source=senior_blog&utm_medium=referral" rel="noopener noreferrer" style="color:rgba(255,255,255,0.9);">${photo.user.name}</a> / Unsplash`,
           });
           if (results.length >= count) break;
         }
@@ -133,18 +135,12 @@ async function fetchUnsplashImages(category: string, count: number, usedIds: Set
   }
 }
 
-// ── 콘텐츠 내 이미지 삽입 (AI팁 섹션 제외) ────────
+// ── 콘텐츠 내 이미지 삽입 ────────────────────────
 function injectImagesIntoContent(html: string, images: UnsplashResult[]): string {
   if (!images.length) return html;
 
-  // AI 도구 활용 팁 섹션에는 이미지 삽입 안 함
-  const AI_TIP_MARKER = "<h2>💡 AI 도구 활용 팁</h2>";
-  const aiTipIdx = html.indexOf(AI_TIP_MARKER);
-  const mainContent = aiTipIdx === -1 ? html : html.slice(0, aiTipIdx);
-  const aiTipContent = aiTipIdx === -1 ? "" : html.slice(aiTipIdx);
-
   const DELIMITER = "</h2>";
-  const parts = mainContent.split(DELIMITER);
+  const parts = html.split(DELIMITER);
 
   const targets: Array<[partIndex: number, imageIndex: number]> = [
     [1, 0],
@@ -169,65 +165,45 @@ function injectImagesIntoContent(html: string, images: UnsplashResult[]): string
     parts[partIdx] = parts[partIdx] + figure;
   }
 
-  return parts.join(DELIMITER) + aiTipContent;
+  return parts.join(DELIMITER);
 }
 
 function buildPrompt(topic: Topic): string {
-  return `당신은 "부놈의 경매이야기" 블로그의 운영자 '부놈'입니다. 부동산 경매 전문 블로그 작가입니다.
+  return `당신은 "토닥토닥 시니어" 블로그의 운영자 '마인드라'입니다. 50대 이상 시니어를 위한 생활정보 블로그 작가입니다.
 
 아래 주제로 블로그 글을 작성해주세요.
 
 주제: ${topic.title}
-난이도: ${topic.level}
 카테고리: ${topic.category}
+SEO 키워드: ${topic.keywords}
 
 [작성 규칙]
-1. 누구나 이해할 수 있는 쉽고 친근한 말투로 작성 (단, "중학생", "초등학생" 등 특정 연령 언급 절대 금지)
-2. 반드시 존댓말(~요, ~습니다, ~세요)만 사용. 반말(~야, ~해, ~이야) 절대 금지
-3. "여러분", "독자님", "친구" 등 독자를 직접 부르는 호칭 절대 사용 금지
-4. 글의 첫 문장은 반드시 강한 후킹으로 시작. 의문형·충격적 사실·공감 유발 문장 중 하나로 시작
-   좋은 예: "경매로 집을 살 때 가장 큰 착각은 '싸게만 사면 된다'는 생각입니다."
-   좋은 예: "부동산 경매에 실패한 사람들의 공통점이 있습니다."
-   나쁜 예: "안녕하세요", "여러분", "오늘은 ~에 대해 알아보겠습니다" (금지)
-5. 블로그 운영자 '부놈'이 독자에게 차분하고 신뢰감 있게 설명해주는 느낌으로 작성
-6. 인사말("안녕하세요", "반갑습니다", "저는 부놈입니다" 등)로 시작 절대 금지
-7. 3000자 내외 (너무 짧으면 안 됨)
-7. 표(<table>)와 목록(<ul><li>)을 최대한 많이 활용
-8. 숫자나 비율로 설명할 수 있는 내용은 반드시 표로 만들 것
-9. 어려운 개념은 쉬운 예시로 반드시 설명
-10. 글의 흐름이 자연스럽게 이어지도록 작성
-11. 단계별 절차(소유권이전, 명도, 세금신고, 입찰, 권리분석 등 순서가 중요한 프로세스)가 있을 때는
-    반드시 아래 HTML 구조의 흐름도로 표현할 것 (4~7단계 적합):
-    <div class="flow-diagram">
-      <div class="flow-step"><div class="flow-num">1</div><div class="flow-body"><strong>단계명</strong><p>설명</p></div></div>
-      <div class="flow-arrow">↓</div>
-      <div class="flow-step"><div class="flow-num">2</div><div class="flow-body"><strong>단계명</strong><p>설명</p></div></div>
-      <div class="flow-arrow">↓</div>
-      ...
-    </div>
-    flow-diagram 클래스는 사용 가능한 태그 목록 외의 div이지만 이 경우에만 허용됨.
-12. 글 마지막에 반드시 아래 형식의 "AI 도구 활용 팁" 섹션 추가
+1. 손자가 할머니·할아버지께 설명하듯 쉽고 따뜻한 말투로 작성
+2. 반드시 존댓말(~요, ~습니다, ~세요)만 사용
+3. "여러분", "독자님" 등 독자를 직접 부르는 호칭 사용 금지
+4. 한 문장은 40자 이내로 짧게 끊어 쓰기
+5. 전문 용어는 반드시 쉬운 말로 풀어서 설명
+6. 글의 첫 문장은 공감을 유발하는 질문이나 상황 묘사로 시작
+   좋은 예: "무릎이 시리면 관절염인가요? 많은 분이 이렇게 걱정하세요."
+   좋은 예: "기초연금, 내가 받을 수 있는 건지 헷갈리시죠?"
+   나쁜 예: "안녕하세요" (인사말 시작 절대 금지)
+   나쁜 예: "오늘은 ~에 대해 알아보겠습니다" (금지)
+7. 2500~3000자 내외
+8. 표(<table>)와 목록(<ul><li>)을 적극 활용하여 한눈에 보기 쉽게 정리
+9. 금액, 기한, 자격조건 등 핵심 수치는 반드시 표로 정리
+10. 단계별 절차가 있으면 순서도(flow-diagram) 형식 사용
+11. 핵심 내용은 <strong> 태그로 강조
+12. 글 마지막에 "한 줄 요약" 섹션 추가
 
-[AI 도구 활용 팁 규칙]
-- 이 주제(${topic.title})와 직접 관련된 실용적인 팁 5~8줄
-- 특정 AI 도구 이름(Claude, ChatGPT, Gemini 등) 절대 언급 금지
-- 반드시 "AI 도구"라고만 표기
-- 실제로 복사해서 바로 쓸 수 있는 프롬프트 예시 1~2개 포함
+[한 줄 요약 형식]
+<h2>한 줄 요약</h2>
+<blockquote>[이 글의 핵심을 1~2문장으로 정리]</blockquote>
 
-[출력 형식 - 매우 중요]
-- 순수 HTML 태그만 출력 (코드 블록, 마크다운 절대 사용 금지)
-- **, ##, *, \`\`\` 같은 마크다운 기호 절대 사용 금지
+[출력 형식]
+- 순수 HTML 태그만 출력 (마크다운 절대 금지)
 - 사용 가능한 태그: <h2> <h3> <p> <ul> <ol> <li> <table> <thead> <tbody> <tr> <th> <td> <strong> <blockquote>
-- <h1> 태그 사용 금지 (제목은 별도로 표시됨)
-- 응답은 HTML 태그로 시작하고 HTML 태그로 끝날 것
-
-[AI 도구 활용 팁 HTML 형식]
-<h2>💡 AI 도구 활용 팁</h2>
-<p>...</p>
-<ul>
-  <li>...</li>
-</ul>
-<blockquote>프롬프트 예시: "..."</blockquote>`;
+- <h1> 태그 사용 금지 (제목은 별도 처리됨)
+- 응답은 반드시 HTML 태그로 시작하고 HTML 태그로 끝날 것`;
 }
 
 function cleanHtml(raw: string): string {
@@ -257,7 +233,7 @@ async function main() {
 
   const forceNewImage = process.argv.includes("--new-image");
 
-  console.log(`📝 재생성 대상: [${topic.level}] ${topic.title}`);
+  console.log(`📝 재생성 대상: [${topic.category}] ${topic.title}`);
   console.log("🤖 Gemini로 글 생성 중...");
 
   const prompt = buildPrompt(topic);

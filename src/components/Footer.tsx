@@ -2,7 +2,7 @@ import Link from "next/link";
 import NewsletterForm from "./NewsletterForm";
 
 export default function Footer() {
-  const siteName = process.env.NEXT_PUBLIC_SITE_NAME || "부놈의 경매이야기";
+  const siteName = process.env.NEXT_PUBLIC_SITE_NAME || "토닥토닥 시니어";
   const year = new Date().getFullYear();
 
   return (
@@ -29,7 +29,7 @@ export default function Footer() {
             📬 이메일로 새 글 받기
           </p>
           <p style={{ fontSize: "13px", color: "var(--header-muted)", marginBottom: "12px" }}>
-            경매 노하우와 새 글 소식을 이메일로 받아보세요
+            시니어 생활정보와 새 글 소식을 이메일로 받아보세요
           </p>
           <NewsletterForm />
         </div>

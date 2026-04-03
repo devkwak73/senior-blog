@@ -1,11 +1,11 @@
 {
-  "name": "부놈의 경매이야기",
-  "short_name": "경매이야기",
-  "description": "AI로 더 쉽게, 더 스마트하게 — 부동산 경매 기초부터 실전까지",
+  "name": "토닥토닥 시니어",
+  "short_name": "토닥시니어",
+  "description": "손자가 설명하듯 쉽고 따뜻한 시니어 생활정보",
   "start_url": "/",
   "display": "standalone",
-  "background_color": "#faf8f4",
-  "theme_color": "#161614",
+  "background_color": "#f5f5f0",
+  "theme_color": "#1a3a2a",
   "lang": "ko",
   "icons": [
     {

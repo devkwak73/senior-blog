@@ -3,35 +3,32 @@
 
 /* ── Design Tokens ──────────────────────────────── */
 :root {
-  --bg:           #faf8f4;
+  --bg:           #f5f5f0;
   --bg-card:      #ffffff;
-  --ink:          #1c1c1a;
-  --ink-mid:      #4a4a46;
-  --ink-muted:    #7a7a74;
-  --ink-faint:    #b0ac9e;
-  --border:       #e5e0d4;
-  --border-light: #f0ece2;
+  --ink:          #1a1a1a;
+  --ink-mid:      #333333;
+  --ink-muted:    #555555;
+  --ink-faint:    #888888;
+  --border:       #ddd8cc;
+  --border-light: #eeeae0;
 
-  --accent:       #e8342a;
-  --accent-hover: #c42820;
-  --accent-faint: #fff0ef;
+  --accent:       #1a7a3d;
+  --accent-hover: #156a33;
+  --accent-faint: #e8f5ec;
 
-  --header-bg:    #161614;
-  --header-text:  #f5f3ee;
-  --header-muted: #8a8880;
+  --header-bg:    #1a3a2a;
+  --header-text:  #f5f5f0;
+  --header-muted: #8aaa98;
 
   /* Category */
-  --cat-before-c:  #0369a1; --cat-before-bg:  #e0f2fe;
-  --cat-bidding-c: #c2410c; --cat-bidding-bg: #ffedd5;
-  --cat-after-c:   #0f766e; --cat-after-bg:   #ccfbf1;
-  --cat-tax-c:     #15803d; --cat-tax-bg:     #dcfce7;
-  --cat-law-c:     #6d28d9; --cat-law-bg:     #ede9fe;
-  --cat-ai-c:      #1d4ed8; --cat-ai-bg:      #dbeafe;
-
-  /* Level */
-  --lv-basic-c: #047857; --lv-basic-bg: #d1fae5;
-  --lv-mid-c:   #b45309; --lv-mid-bg:   #fef3c7;
-  --lv-adv-c:   #b91c1c; --lv-adv-bg:   #fee2e2;
+  --cat-health-c:  #c2410c; --cat-health-bg:  #fff7ed;
+  --cat-subsidy-c: #0369a1; --cat-subsidy-bg: #e0f2fe;
+  --cat-money-c:   #15803d; --cat-money-bg:   #dcfce7;
+  --cat-travel-c:  #7c3aed; --cat-travel-bg:  #ede9fe;
+  --cat-digital-c: #0891b2; --cat-digital-bg: #cffafe;
+  --cat-food-c:    #b45309; --cat-food-bg:    #fef3c7;
+  --cat-mind-c:    #be185d; --cat-mind-bg:    #fce7f3;
+  --cat-legal-c:   #475569; --cat-legal-bg:   #f1f5f9;
 }
 
 /* ── Theme fonts ────────────────────────────────── */
@@ -47,6 +44,7 @@ body {
   background: var(--bg);
   color: var(--ink);
   font-family: var(--font-sans);
+  font-size: 1.125rem;
   word-break: keep-all;
   overflow-wrap: break-word;
   -webkit-font-smoothing: antialiased;
@@ -57,29 +55,28 @@ body {
 .badge {
   display: inline-flex;
   align-items: center;
-  font-size: 0.7rem;
+  font-size: 0.8125rem;
   font-weight: 700;
   letter-spacing: 0.03em;
-  padding: 0.2em 0.65em;
+  padding: 0.3em 0.75em;
   border-radius: 999px;
   white-space: nowrap;
 }
-.badge-before  { color: var(--cat-before-c);  background: var(--cat-before-bg); }
-.badge-bidding { color: var(--cat-bidding-c); background: var(--cat-bidding-bg); }
-.badge-after   { color: var(--cat-after-c);   background: var(--cat-after-bg); }
-.badge-tax     { color: var(--cat-tax-c);     background: var(--cat-tax-bg); }
-.badge-law     { color: var(--cat-law-c);     background: var(--cat-law-bg); }
-.badge-ai      { color: var(--cat-ai-c);      background: var(--cat-ai-bg); }
-.badge-basic   { color: var(--lv-basic-c);    background: var(--lv-basic-bg); }
-.badge-mid     { color: var(--lv-mid-c);      background: var(--lv-mid-bg); }
-.badge-adv     { color: var(--lv-adv-c);      background: var(--lv-adv-bg); }
+.badge-health  { color: var(--cat-health-c);  background: var(--cat-health-bg); }
+.badge-subsidy { color: var(--cat-subsidy-c); background: var(--cat-subsidy-bg); }
+.badge-money   { color: var(--cat-money-c);   background: var(--cat-money-bg); }
+.badge-travel  { color: var(--cat-travel-c);  background: var(--cat-travel-bg); }
+.badge-digital { color: var(--cat-digital-c); background: var(--cat-digital-bg); }
+.badge-food    { color: var(--cat-food-c);    background: var(--cat-food-bg); }
+.badge-mind    { color: var(--cat-mind-c);    background: var(--cat-mind-bg); }
+.badge-legal   { color: var(--cat-legal-c);   background: var(--cat-legal-bg); }
 
 /* ── Category tab (nav) ─────────────────────────── */
 .cat-tab {
   display: inline-flex;
   align-items: center;
-  padding: 0.5rem 0.75rem;
-  font-size: 0.8125rem;
+  padding: 0.625rem 1rem;
+  font-size: 0.9375rem;
   font-weight: 500;
   color: var(--ink-muted);
   white-space: nowrap;
@@ -115,7 +112,7 @@ body {
 
 .feed-title {
   font-family: var(--font-serif);
-  font-size: 1.375rem;
+  font-size: 1.5rem;
   font-weight: 700;
   line-height: 1.4;
   color: var(--ink);
@@ -125,7 +122,7 @@ body {
 .feed-title:hover { color: var(--accent); }
 
 @media (min-width: 768px) {
-  .feed-title { font-size: 1.5rem; }
+  .feed-title { font-size: 1.625rem; }
   .feed-article { padding: 2.5rem 3rem; }
 }
 
@@ -168,7 +165,7 @@ body {
 }
 .post-card-title {
   font-family: var(--font-serif);
-  font-size: 0.9375rem;
+  font-size: 1.0625rem;
   font-weight: 700;
   line-height: 1.45;
   color: var(--ink);
@@ -215,11 +212,11 @@ body {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  min-width: 2.25rem;
-  height: 2.25rem;
-  padding: 0 0.5rem;
+  min-width: 3rem;
+  height: 3rem;
+  padding: 0 0.625rem;
   border-radius: 7px;
-  font-size: 0.875rem;
+  font-size: 1rem;
   font-weight: 500;
   color: var(--ink-mid);
   text-decoration: none;
@@ -235,8 +232,8 @@ body {
 
 /* ── Prose (blog content) ───────────────────────── */
 .prose {
-  line-height: 1.9;
-  font-size: 1rem;
+  line-height: 2.0;
+  font-size: 1.125rem;
   color: var(--ink-mid);
 }
 
@@ -252,11 +249,11 @@ body {
 }
 
 .prose h2 {
-  font-size: 1.3125rem;
+  font-size: 1.5rem;
   padding-bottom: 0.5em;
   border-bottom: 2px solid var(--border);
 }
-.prose h3 { font-size: 1.125rem; }
+.prose h3 { font-size: 1.25rem; }
 .prose h4 { font-size: 1rem; }
 
 .prose p { margin-bottom: 1.35em; }
@@ -345,7 +342,7 @@ body {
   color: var(--ink-mid);
 }
 .prose table tr:last-child td { border-bottom: none; }
-.prose table tr:nth-child(even) td { background: #faf8f4; }
+.prose table tr:nth-child(even) td { background: #f5f5f0; }
 
 /* ── Feed more link ─────────────────────────────── */
 .feed-more-link {

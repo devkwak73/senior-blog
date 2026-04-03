@@ -11,12 +11,14 @@ const LIMIT = 10;
 
 const categories: { key: string | null; label: string }[] = [
   { key: null,       label: "전체" },
-  { key: "before",   label: "입찰준비" },
-  { key: "bidding",  label: "입찰·낙찰" },
-  { key: "after",    label: "명도·출구" },
-  { key: "tax",      label: "세금·대출" },
-  { key: "law",      label: "권리분석" },
-  { key: "ai",       label: "AI활용" },
+  { key: "health",   label: "건강톡톡" },
+  { key: "subsidy",  label: "지원금알리미" },
+  { key: "money",    label: "돈이야기" },
+  { key: "travel",   label: "어디갈까" },
+  { key: "digital",  label: "스마트생활" },
+  { key: "food",     label: "오늘뭐먹지" },
+  { key: "mind",     label: "마음건강" },
+  { key: "legal",    label: "생활법률" },
 ];
 
 type SearchParams = Promise<{
@@ -51,9 +53,6 @@ export default async function HomePage({ searchParams }: { searchParams: SearchP
     whereClauses += " AND category = ?";
     queryParams.push(category);
     countParams.push(category);
-  } else if (!searchQuery) {
-    // 전체 목록에서는 ai 카테고리 제외 (검색 시에는 ai도 포함)
-    whereClauses += " AND category != 'ai'";
   }
 
   queryParams.push(LIMIT, offset);
@@ -89,7 +88,7 @@ export default async function HomePage({ searchParams }: { searchParams: SearchP
                 color: "var(--accent)",
                 marginBottom: "0.5rem",
               }}>
-                부동산 경매 전문 블로그
+                시니어 맞춤 생활정보 블로그
               </div>
               <h1 style={{
                 fontFamily: "var(--font-serif)",
@@ -99,7 +98,7 @@ export default async function HomePage({ searchParams }: { searchParams: SearchP
                 lineHeight: 1.2,
                 letterSpacing: "-0.01em",
               }}>
-                {process.env.NEXT_PUBLIC_SITE_NAME || "부놈의 경매이야기"}
+                {process.env.NEXT_PUBLIC_SITE_NAME || "토닥토닥 시니어"}
               </h1>
               <p style={{
                 fontSize: "0.8125rem",
@@ -107,7 +106,7 @@ export default async function HomePage({ searchParams }: { searchParams: SearchP
                 marginTop: "0.5rem",
                 letterSpacing: "0.02em",
               }}>
-                AI로 더 쉽게, 더 스마트하게 — 경매 기초부터 실전까지
+                손자가 설명하듯 쉽고 따뜻한 시니어 생활정보
               </p>
             </div>
             <div style={{

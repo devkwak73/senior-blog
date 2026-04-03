@@ -84,7 +84,7 @@ export default function PushSubscribe() {
             새 글 알림 받기
           </p>
           <p style={{ fontSize: "12px", color: "#94a3b8", margin: "2px 0 0" }}>
-            경매 노하우 새 글이 올라오면 알려드릴게요
+            시니어 생활정보 새 글이 올라오면 알려드릴게요
           </p>
         </div>
       </div>

@@ -5,18 +5,18 @@ const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "http://localhost:3000";
 
 export const metadata: Metadata = {
   title: "문의하기",
-  description: "부놈의 경매이야기 — 문의 및 연락처",
+  description: "토닥토닥 시니어 — 문의 및 연락처",
   alternates: { canonical: `${siteUrl}/contact` },
   openGraph: {
-    title: "문의하기 | 부놈의 경매이야기",
-    description: "부놈의 경매이야기 — 문의 및 연락처",
+    title: "문의하기 | 토닥토닥 시니어",
+    description: "토닥토닥 시니어 — 문의 및 연락처",
     url: `${siteUrl}/contact`,
     images: [{ url: `${siteUrl}/og-image.png` }],
   },
 };
 
 export default function ContactPage() {
-  const siteName = process.env.NEXT_PUBLIC_SITE_NAME || "부놈의 경매이야기";
+  const siteName = process.env.NEXT_PUBLIC_SITE_NAME || "토닥토닥 시니어";
 
   return (
     <div style={{ background: "var(--bg)", minHeight: "100vh" }}>
@@ -138,7 +138,7 @@ export default function ContactPage() {
               { icon: "📝", title: "콘텐츠 오류 신고", desc: "글의 내용 중 오류나 개선이 필요한 부분을 알려주세요." },
               { icon: "🤝", title: "광고·제휴 문의", desc: "배너 광고, 협업, 스폰서십 관련 문의를 받습니다." },
               { icon: "🔒", title: "개인정보 요청", desc: "수집된 개인정보의 열람·정정·삭제를 요청할 수 있습니다." },
-              { icon: "💬", title: "기타 문의", desc: "블로그 운영, 경매 관련 기타 문의 사항을 보내주세요." },
+              { icon: "💬", title: "기타 문의", desc: "블로그 운영, 시니어 생활정보 관련 기타 문의 사항을 보내주세요." },
             ].map(({ icon, title, desc }) => (
               <div key={title} style={{
                 display: "flex",

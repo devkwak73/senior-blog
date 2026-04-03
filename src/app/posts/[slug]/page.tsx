@@ -87,20 +87,24 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 }
 
 const catLabels: Record<string, string> = {
-  before:  "입찰준비",
-  bidding: "입찰·낙찰",
-  after:   "명도·출구",
-  tax:     "세금·대출",
-  law:     "권리분석",
-  ai:      "AI활용",
+  health:  "건강톡톡",
+  subsidy: "지원금알리미",
+  money:   "돈이야기",
+  travel:  "어디갈까",
+  digital: "스마트생활",
+  food:    "오늘뭐먹지",
+  mind:    "마음건강",
+  legal:   "생활법률",
 };
 const catBadgeClass: Record<string, string> = {
-  before: "badge badge-before",
-  bidding: "badge badge-bidding",
-  after:   "badge badge-after",
-  tax:     "badge badge-tax",
-  law:     "badge badge-law",
-  ai:      "badge badge-ai",
+  health:  "badge badge-health",
+  subsidy: "badge badge-subsidy",
+  money:   "badge badge-money",
+  travel:  "badge badge-travel",
+  digital: "badge badge-digital",
+  food:    "badge badge-food",
+  mind:    "badge badge-mind",
+  legal:   "badge badge-legal",
 };
 
 export default async function PostPage({ params }: Props) {
@@ -119,14 +123,6 @@ export default async function PostPage({ params }: Props) {
         year: "numeric", month: "long", day: "numeric",
       })
     : null;
-
-  const levelLabel = post.slug?.startsWith("basic-") ? "기초"
-    : post.slug?.startsWith("mid-") ? "중급"
-    : post.slug?.startsWith("adv-") ? "고급"
-    : null;
-  const levelCls = levelLabel === "기초" ? "badge badge-basic"
-    : levelLabel === "중급" ? "badge badge-mid"
-    : "badge badge-adv";
 
   return (
     <>
@@ -151,7 +147,7 @@ export default async function PostPage({ params }: Props) {
               textDecoration: "none",
               letterSpacing: "-0.01em",
             }}>
-              부놈의 경매이야기
+              토닥토닥 시니어
             </Link>
             <Link href="/" style={{
               fontSize: "0.75rem",
@@ -185,9 +181,6 @@ export default async function PostPage({ params }: Props) {
               <span className={catBadgeClass[post.category] || "badge"}>
                 {catLabels[post.category] || post.category}
               </span>
-              {levelLabel && (
-                <span className={levelCls}>{levelLabel}</span>
-              )}
               {publishedDate && (
                 <span style={{ fontSize: "0.75rem", color: "var(--ink-faint)", marginLeft: "0.25rem" }}>
                   {publishedDate}
@@ -218,7 +211,7 @@ export default async function PostPage({ params }: Props) {
             }}>
               <div style={{ width: "2.5rem", height: "3px", background: "var(--accent)", borderRadius: "2px" }} />
               <span style={{ fontSize: "0.75rem", color: "var(--ink-faint)", fontWeight: 600, letterSpacing: "0.05em" }}>
-                부놈
+                마인드라
               </span>
             </div>
 

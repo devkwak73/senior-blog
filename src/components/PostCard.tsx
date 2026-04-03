@@ -9,40 +9,38 @@ interface PostCardProps {
 }
 
 const catLabels: Record<string, string> = {
-  before: "입찰준비",
-  bidding: "입찰·낙찰",
-  after:   "명도·출구",
-  tax:     "세금·대출",
-  law:     "권리분석",
-  ai:      "AI활용",
+  health:  "건강톡톡",
+  subsidy: "지원금알리미",
+  money:   "돈이야기",
+  travel:  "어디갈까",
+  digital: "스마트생활",
+  food:    "오늘뭐먹지",
+  mind:    "마음건강",
+  legal:   "생활법률",
 };
 
 const catBadgeClass: Record<string, string> = {
-  before: "badge badge-before",
-  bidding: "badge badge-bidding",
-  after:   "badge badge-after",
-  tax:     "badge badge-tax",
-  law:     "badge badge-law",
-  ai:      "badge badge-ai",
+  health:  "badge badge-health",
+  subsidy: "badge badge-subsidy",
+  money:   "badge badge-money",
+  travel:  "badge badge-travel",
+  digital: "badge badge-digital",
+  food:    "badge badge-food",
+  mind:    "badge badge-mind",
+  legal:   "badge badge-legal",
 };
 
 // Top border accent per category
 const catAccent: Record<string, string> = {
-  before: "var(--cat-before-c)",
-  bidding: "var(--cat-bidding-c)",
-  after:   "var(--cat-after-c)",
-  tax:     "var(--cat-tax-c)",
-  law:     "var(--cat-law-c)",
-  ai:      "var(--cat-ai-c)",
+  health:  "var(--cat-health-c)",
+  subsidy: "var(--cat-subsidy-c)",
+  money:   "var(--cat-money-c)",
+  travel:  "var(--cat-travel-c)",
+  digital: "var(--cat-digital-c)",
+  food:    "var(--cat-food-c)",
+  mind:    "var(--cat-mind-c)",
+  legal:   "var(--cat-legal-c)",
 };
-
-function getLevelBadge(slug?: string): { cls: string; label: string } | null {
-  if (!slug) return null;
-  if (slug.startsWith("basic-")) return { cls: "badge badge-basic", label: "기초" };
-  if (slug.startsWith("mid-"))   return { cls: "badge badge-mid",   label: "중급" };
-  if (slug.startsWith("adv-"))   return { cls: "badge badge-adv",   label: "고급" };
-  return null;
-}
 
 export default function PostCard({ posts }: PostCardProps) {
   if (posts.length === 0) {
@@ -64,8 +62,7 @@ export default function PostCard({ posts }: PostCardProps) {
     <div style={{ display: "flex", flexDirection: "column", gap: "1rem" }}>
       <div style={gridStyle}>
         {posts.map((post) => {
-              const cat = post.category || "before";
-              const level = getLevelBadge(post.slug);
+              const cat = post.category || "health";
               const accent = catAccent[cat] || "var(--accent)";
               const likeCount = (post as Record<string, unknown>).like_count as number || 0;
               const publishedDate = post.published_at
@@ -91,14 +88,13 @@ export default function PostCard({ posts }: PostCardProps) {
                     </div>
                   ) : (
                     <div className="post-card-placeholder">
-                      <span style={{ fontSize: "2rem", opacity: 0.4 }}>🏛</span>
+                      <span style={{ fontSize: "2rem", opacity: 0.4 }}>🌿</span>
                     </div>
                   )}
 
                   <div className="post-card-body">
                     <div style={{ display: "flex", gap: "0.35rem", marginBottom: "0.6rem", flexWrap: "wrap" }}>
                       <span className={catBadgeClass[cat] || "badge"}>{catLabels[cat] || cat}</span>
-                      {level && <span className={level.cls}>{level.label}</span>}
                     </div>
 
                     <h2 className="post-card-title">{post.title}</h2>
