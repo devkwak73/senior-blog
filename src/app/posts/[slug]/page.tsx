@@ -10,6 +10,7 @@ import ShareButton from "@/components/ShareButton";
 import RelatedPosts from "@/components/RelatedPosts";
 import SubscribeCard from "@/components/SubscribeCard";
 import Link from "next/link";
+import CoupangBanner from "@/components/CoupangBanner";
 
 export const revalidate = 3600;
 
@@ -235,6 +236,9 @@ export default async function PostPage({ params }: Props) {
               className="prose"
               dangerouslySetInnerHTML={{ __html: post.content }}
             />
+
+            {/* 쿠팡파트너스 가로 배너 */}
+            <CoupangBanner category={post.category} />
 
             {/* 좋아요 & 공유 */}
             <div style={{
