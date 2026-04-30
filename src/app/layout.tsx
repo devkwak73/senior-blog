@@ -28,6 +28,9 @@ export const metadata: Metadata = {
   authors: [{ name: "마인드라", url: siteUrl }],
   alternates: {
     canonical: siteUrl,
+    types: {
+      "application/rss+xml": [{ url: `${siteUrl}/rss.xml`, title: siteName }],
+    },
   },
   openGraph: {
     type: "website",
